@@ -105,6 +105,10 @@ async function recurseMenu(menu, callback, ...parents) {
     executablePath: '/usr/bin/chromium',
 //    headless: false,
 //    devtools: true,
+    defaultViewport: {
+      width: 1920,
+      height: 1080,
+    },
   });
 
   const page = await browser.newPage();
