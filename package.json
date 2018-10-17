@@ -1,0 +1,13 @@
+{
+  "name": "miq-puppet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Martin Hradil <mhradil@redhat.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "~1.9.0"
+  }
+}
