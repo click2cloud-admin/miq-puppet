@@ -2,6 +2,7 @@ const mkdirp = require('mkdirp');
 const puppeteer = require('puppeteer-core');
 const untildify = require('untildify');
 const { promisify } = require('util');
+require('array-foreach-async');
 
 const SERVER = 'http://localhost:3000';
 const LOGIN = ['admin', 'smartvm'];
@@ -80,6 +81,14 @@ async function screenshot(page, name) {
   });
 
   console.log('SCREENSHOT', `${untildify(OUTPUT)}/${name}.png`);
+}
+
+async function recurseMenu(menu, callback, ...parents) {
+  await menu.forEachAsync(async function(item) {
+    await callback(item, parents);
+
+    await recurseMenu(item.items, callback, ...parents, item);
+  });
 }
 
 (async () => {
