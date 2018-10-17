@@ -16,10 +16,13 @@ function logRequest(req) {
   if (url.match(/\?body=1$/))
     return;
   // skip webpack packs
-  if (url.match(/3000\/packs/))
+  if (url.match(/\/packs\//))
     return;
   // skip fonts, custom css, images
-  if (url.match(/\.(css|svg|ico|png|woff2)/))
+  if (url.match(/\.(css|svg|ico|png|woff2|ttf)/))
+    return;
+  // skip angular templates
+  if (url.match(/\/static\//))
     return;
 
   console.log('REQUEST: ', url);
