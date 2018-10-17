@@ -39,8 +39,13 @@ function logConsole(msg) {
   console.log('PAGE LOG:', text);
 }
 
+async function goto(page, path) {
+  const fullpath = path.match(/^https?:/) ? path : SERVER + path;
+  await page.goto(fullpath);
+}
+
 async function login(page, user, pass) {
-  await page.goto(SERVER + '/dashboard/login');
+  await goto(page, '/dashboard/login');
 
   const userEl = await page.$('#user_name');
   const passEl = await page.$('#user_password');
