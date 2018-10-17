@@ -1,6 +1,12 @@
-// yarn add -D puppeteer-core
+const mkdirp = require('mkdirp');
 const puppeteer = require('puppeteer-core');
+const untildify = require('untildify');
+const { promisify } = require('util');
+
 const SERVER = 'http://localhost:3000';
+const LOGIN = ['admin', 'smartvm'];
+const OUTPUT = '~/miq-puppet-screenshots';
+
 
 function logRequest(req) {
   const url = req.url();
@@ -66,6 +72,15 @@ async function menuItems(page) {
   });
 }
 
+async function screenshot(page, name) {
+  await promisify(mkdirp)(untildify(OUTPUT));
+
+  await page.screenshot({
+    path: `${untildify(OUTPUT)}/${name}.png`,
+  });
+
+  console.log('SCREENSHOT', `${untildify(OUTPUT)}/${name}.png`);
+}
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -79,14 +94,12 @@ async function menuItems(page) {
   page.on('console', logConsole);
   page.on('request', logRequest);
 
-  await login(page, 'admin', 'smartvm');
-
-  await page.screenshot({
-    path: '/home/himdel/IN/example.png',
-  });
+  await login(page, ...LOGIN);
 
   const menu = await menuItems(page);
   console.log('menu', menu);
+
+  await screenshot(page, 'foobar');
 
   await browser.close();
 })();
