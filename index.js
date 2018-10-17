@@ -99,6 +99,30 @@ async function recurseMenu(menu, callback, ...parents) {
   });
 }
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}
+
+async function waitReady(page) {
+  let inFlight = true;
+  while (inFlight) {
+    // TODO this blocks when wait_for_task
+
+    inFlight = await page.evaluate(() => {
+      return ManageIQ.qe.anythingInFlight();
+    });
+
+    if (inFlight) {
+      console.log('QE: waiting for !anythingInFlight');
+      await wait(500);
+    }
+  }
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -118,9 +142,18 @@ async function recurseMenu(menu, callback, ...parents) {
   await login(page, ...LOGIN);
 
   const menu = await menuItems(page);
-  console.log('menu', menu);
+  await recurseMenu(menu, async (item, parents) => {
+    let path = "";
+    parents.forEach((p) => {
+      path += `${p.title} > `;
+    });
+    path += item.title;
 
-  await screenshot(page, 'foobar');
+    console.log('RECURSE:', path);
+    await goto(page, item.href);
+    await waitReady(page);
+    await screenshot(page, path.replace(/[^-a-zA-Z0-9_]/g, '_'));
+  });
 
   await browser.close();
 })();
