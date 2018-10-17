@@ -69,7 +69,7 @@ async function menuItems(page) {
       parent.querySelectorAll(':scope > li > a').forEach((el) => {
         items.push({
           href: el.href,
-          title: el.innerText,
+          title: $(el).text().trim(),
           items: children(el.parentElement.querySelector(`${selector} > ul`), ...rest),
         });
       });
