@@ -14,18 +14,24 @@ function logRequest(req) {
 
   // skip assets
   if (url.match(/\?body=1$/))
-    return;
+    return req.continue();
   // skip webpack packs
   if (url.match(/\/packs\//))
-    return;
+    return req.continue();
   // skip fonts, custom css, images
   if (url.match(/\.(css|svg|ico|png|woff2|ttf)/))
-    return;
+    return req.continue();
   // skip angular templates
   if (url.match(/\/static\//))
-    return;
+    return req.continue();
+
+  // abort wait_for_task
+  if (url.match(/\/wait_for_task\//))
+    return req.abort(); // (or req.respond with a response?)
 
   console.log('REQUEST: ', url);
+
+  req.continue();
 }
 
 function logConsole(msg) {
@@ -140,6 +146,7 @@ async function waitReady(page) {
   });
 
   const page = await browser.newPage();
+  await page.setRequestInterception(true);
   page.on('console', logConsole);
   page.on('request', logRequest);
 
