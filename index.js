@@ -107,6 +107,10 @@ function wait(ms) {
   });
 }
 
+function randomWait(min = 500, max = 1500) {
+  return wait(Math.trunc(Math.random() * Math.abs(max - min) + Math.min(min, max)));
+}
+
 async function waitReady(page) {
   let inFlight = true;
   while (inFlight) {
@@ -143,6 +147,8 @@ async function waitReady(page) {
 
   const menu = await menuItems(page);
   await recurseMenu(menu, async (item, parents) => {
+    await randomWait();
+
     let path = "";
     parents.forEach((p) => {
       path += `${p.title} > `;
